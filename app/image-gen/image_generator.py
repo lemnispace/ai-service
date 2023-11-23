@@ -6,19 +6,21 @@ import torch
 app = FastAPI()
 
 # load both base & refiner
-base = DiffusionPipeline.from_pretrained(
-    "stabilityai/stable-diffusion-xl-base-1.0", torch_dtype=torch.float16, variant="fp16", use_safetensors=True
-)
-base.enable_model_cpu_offload()
-refiner = DiffusionPipeline.from_pretrained(
-    "stabilityai/stable-diffusion-xl-refiner-1.0",
-    text_encoder_2=base.text_encoder_2,
-    vae=base.vae,
-    torch_dtype=torch.float16,
-    use_safetensors=True,
-    variant="fp16",
-)
-refiner.enable_model_cpu_offload()
+# base = DiffusionPipeline.from_pretrained(
+#     "stabilityai/stable-diffusion-xl-base-1.0", torch_dtype=torch.float32, variant="fp16", use_safetensors=True
+# )
+
+# refiner = DiffusionPipeline.from_pretrained(
+#     "stabilityai/stable-diffusion-xl-refiner-1.0",
+#     text_encoder_2=base.text_encoder_2,
+#     vae=base.vae,
+#     torch_dtype=torch.float32,
+#     use_safetensors=True,
+#     variant="fp16",
+# )
+
+pipe = DiffusionPipeline.from_pretrained("stabilityai/stable-diffusion-xl-base-1.0", torch_dtype=torch.float32, use_safetensors=True, variant="fp16")
+
 
 class GenImgRequest(BaseModel):
     # Text prompt with description of the things you want in the image to be generated
@@ -38,20 +40,21 @@ class GenImgRequest(BaseModel):
 @app.post('/generate-image')
 async def generate_image(request: GenImgRequest):
     # run both experts
-    image = base(
-        prompt=request.prompt,
-        num_inference_steps=request.n_steps,
-        denoising_end=request.high_noise_frac,
-        output_type="latent",
-    ).images
-    image = refiner(
-        prompt=request.prompt,
-        num_inference_steps=request.n_steps,
-        denoising_start=request.high_noise_frac,
-        image=image,
-    ).images[0]
+    # image = base(
+    #     prompt=request.prompt,
+    #     num_inference_steps=request.n_steps,
+    #     denoising_end=request.high_noise_frac,
+    #     output_type="latent",
+    # ).images
+    # image = refiner(
+    #     prompt=request.prompt,
+    #     num_inference_steps=request.n_steps,
+    #     denoising_start=request.high_noise_frac,
+    #     image=image,
+    # ).images[0]
+    images = pipe(prompt=request.prompt).images[0]
     # return the generated image
-    return {"image": image}
+    return {"image": images}
     
 
 # prompt = "A majestic lion jumping from a big stone at night"
