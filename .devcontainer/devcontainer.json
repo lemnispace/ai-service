@@ -8,7 +8,7 @@
     // Update the 'dockerFile' property if you aren't using the standard 'Dockerfile' filename.
     "dockerfile": "../Dockerfile"
   },
-
+  "runArgs": ["--env-file", ".devcontainer/devcontainer.env"],
   // Features to add to the dev container. More info: https://containers.dev/features.
   // "features": {},
 
@@ -39,7 +39,11 @@
         "ms-toolsai.vscode-jupyter-slideshow",
         "ms-python.vscode-pylance",
         "DavidAnson.vscode-markdownlint"
-      ]
+      ],
+      "settings": {
+        "editor.formatOnSave": true,
+        "editor.defaultFormatter": "ms-python.black-formatter"
+      }
     }
   }
 
