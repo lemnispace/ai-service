@@ -21,10 +21,6 @@ class GenTextToImageRequest(BaseModel):
         default=None,
         description="Seed is used to reproduce results, same seed will give you same image in return again. Pass null for a random number.",
     )
-    init_image: Optional[str] = Field(
-        default=None,
-        description="Initial image to start with. Pass null for a random image.",
-    )
     steps: Optional[int] = Field(
         default=None, description="Number of steps to run the model for"
     )

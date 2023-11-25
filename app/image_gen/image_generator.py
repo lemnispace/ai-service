@@ -49,7 +49,6 @@ def get_text_to_image_api_request(
             else 0,  # Assuming 0 for random
             steps=request.steps,
         )
-
         return stability_request
     except Exception as e:
         print(e)
@@ -70,7 +69,7 @@ def get_api_key() -> str:
     return key
 
 
-async def generate_image(request: GenTextToImageRequest):
+async def generate_image_from_text(request: GenTextToImageRequest):
     """Generate an image"""
     async with AsyncClient() as client:
         engine_id = EngineId.v1_6
@@ -80,14 +79,23 @@ async def generate_image(request: GenTextToImageRequest):
         stability_request = get_text_to_image_api_request(
             request, engine_id
         ).model_dump(exclude_none=True)
-        response = await client.post(
-            url=url,
-            json=stability_request,
-            headers={
-                "Authorization": f"Bearer {api_key}",
-                "Content-Type": "application/json",
-                "Accept": "application/json",
-            },
-        )
-        response.raise_for_status()
-        return response.json()
+        try:
+            response = await client.post(
+                url=url,
+                json=stability_request,
+                headers={
+                    "Authorization": f"Bearer {api_key}",
+                    "Content-Type": "application/json",
+                    "Accept": "application/json",
+                },
+            )
+            if response.status_code != 200:
+                print(f'Stability API Error: {response.json()["message"]}')
+                response.raise_for_status()
+            return response.json()
+        except Exception as e:
+            print(
+                f"Error fetching image with request url: {url}.\nRequest: {stability_request}",
+                e,
+            )
+            raise Exception(e)
