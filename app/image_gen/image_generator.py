@@ -1,7 +1,5 @@
 import os
-from typing import Optional
 from httpx import AsyncClient
-from pydantic import BaseModel
 from app.image_gen.types import (
     StabilityTxt2ImgRequest,
     GenTextToImageRequest,

@@ -1,5 +1,4 @@
-from fastapi import FastAPI, HTTPException, Response
-from pydantic import BaseModel
+from fastapi import FastAPI, HTTPException
 from app.image_gen.image_generator import generate_image
 from app.image_gen.types import GenTextToImageRequest
 
