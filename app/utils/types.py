@@ -40,7 +40,7 @@ class TextPrompt(BaseModel):
     weight: float  # The weight of the prompt in influencing the image generation.
 
 
-class StabilityTxt2ImgRequest(BaseModel):
+class StabilityTextToImageRequest(BaseModel):
     """
     Request schema for generating an image using text prompts and specific parameters.
     """
