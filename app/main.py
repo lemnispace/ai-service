@@ -1,5 +1,8 @@
 from fastapi import FastAPI
-from app.routers.text_to_image import router as text_to_image_router
+from app.api.api_v1 import api as api_v1
+from mangum import Mangum
 
 app = FastAPI()
-app.include_router(text_to_image_router)
+app.include_router(api_v1.router, prefix="/api/v1")
+
+handler = Mangum(app)

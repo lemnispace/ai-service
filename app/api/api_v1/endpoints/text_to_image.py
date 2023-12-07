@@ -9,7 +9,7 @@ from app.services.stability_text_to_image import generate_image_from_text
 router = APIRouter()
 
 
-@router.post("/text-to-image")
+@router.post("/")
 async def text_to_image(request: GenTextToImageRequest):
     try:
         engine_id = EngineId.v1_6
