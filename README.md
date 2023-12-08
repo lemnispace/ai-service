@@ -17,7 +17,7 @@ uvicorn app.main:app --reload
 
 ## Usage
 
-Make a POST request to the `/text-to-image` endpoint with a JSON body containing the following fields:
+Make a POST request to the `/api/v1/text-to-image` endpoint with a JSON body containing the following fields:
 
 ```json
 {
