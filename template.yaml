@@ -18,6 +18,20 @@ Globals:
   Api:
     TracingEnabled: true
 
+Parameters:
+  StabilityAPIHost:
+    Type: String
+    Description: "Base URL for Stability API"
+    Default: "replace-me"
+  StabilityAPIHostGen:
+    Type: String
+    Description: "Base URL for Stability API for generating images"
+    Default: "replace-me"
+  StabilityAPIKey:
+    Type: String
+    Description: "API Key for Stability API"
+    Default: "api-key"
+
 Resources:
   AIServiceFunction:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
@@ -35,9 +49,9 @@ Resources:
             Method: post
       Environment:
         Variables:
-          STABILITY_API_HOST":
-          STABILITY_API_HOST_GEN":
-          STABILITY_API_KEY":
+          STABILITY_API_HOST: !Ref StabilityAPIHost
+          STABILITY_API_HOST_GEN: !Ref StabilityAPIHostGen
+          STABILITY_API_KEY: !Ref StabilityAPIKey
 
   ApplicationResourceGroup:
     Type: AWS::ResourceGroups::Group
