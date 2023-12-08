@@ -1,6 +1,6 @@
 from httpx import AsyncClient
 import os
-from app.utils.types import StabilityTextToImageRequest, EngineId
+from utils.types import StabilityTextToImageRequest, EngineId
 
 
 def get_api_key() -> str:

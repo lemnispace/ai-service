@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from app.api.api_v1 import api as api_v1
+from api.api_v1 import api as api_v1
 from mangum import Mangum
 
 app = FastAPI()

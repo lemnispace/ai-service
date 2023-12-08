@@ -1,10 +1,10 @@
 from fastapi import APIRouter, HTTPException
-from app.utils.types import (
+from utils.types import (
     GenTextToImageRequest,
     EngineId,
 )
-from app.utils.stability_utils import get_text_to_image_api_request
-from app.services.stability_text_to_image import generate_image_from_text
+from utils.stability_utils import get_text_to_image_api_request
+from services.stability_text_to_image import generate_image_from_text
 
 router = APIRouter()
 

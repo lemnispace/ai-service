@@ -1,4 +1,4 @@
-from app.utils.types import EngineId, GenTextToImageRequest, StabilityTextToImageRequest
+from .types import EngineId, GenTextToImageRequest, StabilityTextToImageRequest
 
 
 def get_default_image_dimensions(engine_id: EngineId) -> (int, int):
