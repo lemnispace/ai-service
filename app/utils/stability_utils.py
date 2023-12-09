@@ -39,9 +39,7 @@ def get_text_to_image_api_request(
             text_prompts=text_prompts,
             cfg_scale=7,  # Assuming a default value, update as needed
             samples=request.samples,
-            seed=request.seed
-            if request.seed is not None
-            else 0,  # Assuming 0 for random
+            seed=request.seed,  # Assuming 0 for random
             steps=request.steps,
         )
         return stability_request
