@@ -16,7 +16,7 @@
   // "forwardPorts": [],
 
   // Uncomment the next line to run commands after the container is created.
-  "postCreateCommand": "pip install -r ./app/requirements.txt",
+  "postCreateCommand": "pip install -r ./app/requirements.txt && pip install -r ./requirements-dev.txt",
 
   // Configure tool-specific properties.
   "customizations": {
@@ -44,7 +44,6 @@
       "settings": {
         "editor.formatOnSave": true,
         "editor.tabSize": 2,
-        "editor.insertSpaces": false,
         "editor.defaultFormatter": "ms-python.black-formatter"
       }
     }
