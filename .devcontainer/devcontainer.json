@@ -39,6 +39,7 @@
         "ms-toolsai.jupyter-renderers",
         "ms-toolsai.vscode-jupyter-slideshow",
         "DavidAnson.vscode-markdownlint",
+        "AmazonWebServices.aws-toolkit-vscode",
         "ms-python.vscode-pylance"
       ],
       "settings": {
