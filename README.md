@@ -58,3 +58,31 @@ Make a POST request to the `/api/v1/text-to-image` endpoint with a JSON body con
   "samples": 2
 }
 ```
+
+## Development with AWS SAM
+
+If you have not configured your AWS CLI with SSO, run the following command:
+
+```bash
+aws configure sso --profile [your-profile]
+```
+
+Then run the following command to login:
+
+```bash
+aws sso login --profile [your-profile]
+```
+
+To deploy the Lambda function to AWS, you can use the following command:
+
+```bash
+sam build --profile [your-profile]
+sam deploy --guided --profile [your-profile]
+```
+
+If you have already deployed the Lambda function and only want to update the function code, you can use the following command:
+
+```bash
+sam build --profile [your-profile]
+sam deploy --profile [your-profile]
+```
