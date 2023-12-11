@@ -27,6 +27,14 @@ Parameters:
     Type: String
     Description: "API Key for Stability API"
     Default: "api-key"
+  StageName:
+    Type: String
+    Description: "The deployment stage name (e.g., Dev, Stage, Prod)"
+    Default: ""
+  ServiceName:
+    Type: String
+    Description: "The name of the service"
+    Default: ""
 
 Resources:
   AIServiceFunction:
@@ -42,11 +50,30 @@ Resources:
           STABILITY_API_HOST: !Ref StabilityAPIHost
           STABILITY_API_HOST_GEN: !Ref StabilityAPIHostGen
           STABILITY_API_KEY: !Ref StabilityAPIKey
+          ENV: !Ref StageName
+          SERVICE_NAME: !Ref ServiceName
+      Events:
+        AIService:
+          Type: HttpApi # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Properties:
+            Path: /{proxy+}
+            Method: ANY
+            ApiId: 
+              Ref: AIServiceHttpApi
+        
+
+  AIServiceHttpApi:
+    Type: AWS::Serverless::HttpApi
+    Properties:
+      StageName: !Ref StageName
 
 Outputs:
   # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
   # Find out more about other implicit resources you can reference within SAM
   # https://github.com/awslabs/serverless-application-model/blob/master/docs/internals/generated_resources.rst#api
+  ApiEndpoint:
+    Description: API Gateway endpoint URL for AI Service function
+    Value: !Sub "https://${AIServiceHttpApi}.execute-api.${AWS::Region}.amazonaws.com/${StageName}/${ServiceName}/"
   AIServiceFunction:
     Description: AI Service Lambda Function for generating images and text ARN
     Value: !GetAtt AIServiceFunction.Arn
