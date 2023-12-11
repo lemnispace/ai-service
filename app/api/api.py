@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-from .endpoints import text_to_image
+from .gen import text_to_image
 
 router = APIRouter()
 router.include_router(

@@ -1,4 +1,4 @@
-import app.api.api_v1.endpoints.text_to_image as text_to_image
+import app.api.gen.text_to_image as text_to_image
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
 from httpx import Response
