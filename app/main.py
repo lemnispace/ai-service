@@ -1,21 +1,9 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from api import api
-from dotenv import load_dotenv
-import os
 from mangum import Mangum
 
-
-def get_root_path():
-    load_dotenv()
-    env = os.getenv("ENV", "")
-    service_name = os.getenv("SERVICE_NAME", "")
-    return "/".join(filter(bool, [env, service_name]))
-
-
-root_path = get_root_path()
 app = FastAPI(
-    root_path=f"/{root_path}" if root_path else None,
     title="AI Generative Services API",
 )
 
@@ -27,6 +15,14 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.include_router(api.router)
+app.include_router(api.router, prefix="/ai-gen")
 
-handler = Mangum(app)
+
+def handler(event, context):
+    stage_variables = event.get("stageVariables", {})
+    stage = stage_variables.get("Stage", "") if stage_variables else ""
+    if stage:
+        app.root_path = f"/{stage}"
+    asgi_handler = Mangum(app)
+    response = asgi_handler(event, context)
+    return response

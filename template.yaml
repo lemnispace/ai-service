@@ -27,14 +27,6 @@ Parameters:
     Type: String
     Description: "API Key for Stability API"
     Default: "api-key"
-  StageName:
-    Type: String
-    Description: "The deployment stage name (e.g., Dev, Stage, Prod)"
-    Default: ""
-  ServiceName:
-    Type: String
-    Description: "The prefix for the service name added to the path of the API Gateway endpoint URL"
-    Default: "ai-gen"
 
 Resources:
   AIServiceFunction:
@@ -50,8 +42,6 @@ Resources:
           STABILITY_API_HOST: !Ref StabilityAPIHost
           STABILITY_API_HOST_GEN: !Ref StabilityAPIHostGen
           STABILITY_API_KEY: !Ref StabilityAPIKey
-          ENV: !Ref StageName
-          SERVICE_NAME: !Ref ServiceName
       Events:
         AIService:
           Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
