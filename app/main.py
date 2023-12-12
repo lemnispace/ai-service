@@ -13,8 +13,9 @@ def get_root_path():
     return "/".join(filter(bool, [env, service_name]))
 
 
+root_path = get_root_path()
 app = FastAPI(
-    root_path=f"/{get_root_path()}",
+    root_path=f"/{root_path}" if root_path else None,
     title="AI Generative Services API",
 )
 
