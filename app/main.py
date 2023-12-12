@@ -23,6 +23,6 @@ def handler(event, context):
     stage_variables = event.get("stageVariables", {})
     stage = stage_variables.get("Stage", None) if stage_variables else None
     app.root_path = f"/{stage}/{ROOT_PATH}" if stage else f"/{ROOT_PATH}"
-    asgi_handler = Mangum(app, api_gateway_base_path=app.root_path)
+    asgi_handler = Mangum(app, api_gateway_base_path=f"/{ROOT_PATH}")
     response = asgi_handler(event, context)
     return response
