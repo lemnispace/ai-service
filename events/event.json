@@ -1,11 +1,11 @@
 {
   "version": "2.0",
   "routeKey": "$default",
-  "rawPath": "/api/v1/text-to-image/",
+  "rawPath": "/ai-gen/text-to-image/",
   "requestContext": {
     "http": {
       "method": "POST",
-      "path": "/api/v1/text-to-image/",
+      "path": "/ai-gen/text-to-image/",
       "sourceIp": "127.0.0.1"
     }
   },
