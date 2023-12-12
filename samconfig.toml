@@ -20,7 +20,7 @@ resolve_s3 = true
 s3_prefix = "ai-service"
 region = "us-east-1"
 profile = "lemnispace-sam"
-parameter_overrides = "StabilityAPIHost=\"https://api.stability.ai\" StabilityAPIHostGen=\"https://api.stability.ai/v1/generation\" StabilityAPIKey=\"api-key\""
+parameter_overrides = "StabilityAPIHost=\"https://api.stability.ai\" StabilityAPIHostGen=\"https://api.stability.ai/v1/generation\" StabilityAPIKey=\"api-key\" StageName=\"Dev\" AllowOrigins=\"*\""
 image_repositories = []
 
 [default.package.parameters]

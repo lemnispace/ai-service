@@ -27,6 +27,14 @@ Parameters:
     Type: String
     Description: "API Key for Stability API"
     Default: "api-key"
+  StageName:
+    Type: String
+    Description: "The deployment stage name (e.g., Dev, Stage, Prod)"
+    Default: ""
+  AllowOrigins:
+    Type: String
+    Description: "Comma-separated list of allowed origins for CORS"
+    Default: "*"
 
 Resources:
   AIServiceFunction:
@@ -42,12 +50,23 @@ Resources:
           STABILITY_API_HOST: !Ref StabilityAPIHost
           STABILITY_API_HOST_GEN: !Ref StabilityAPIHostGen
           STABILITY_API_KEY: !Ref StabilityAPIKey
+          ALLOWED_ORIGINS: !Ref AllowOrigins
+          ROOT_PATH: ai-gen
       Events:
         AIService:
-          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Type: HttpApi
           Properties:
             Path: /ai-gen/{proxy+}
             Method: ANY
+            ApiId: 
+              Ref: AIServiceHttpApi
+
+  AIServiceHttpApi:
+    Type: AWS::Serverless::HttpApi
+    Properties:
+      StageName: !Ref StageName
+      StageVariables:
+        Stage: !Ref StageName
 
 Outputs:
   # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
@@ -61,3 +80,7 @@ Outputs:
   AIServiceFunctionIamRole:
     Description: Implicit IAM Role created for AI Service function
     Value: !GetAtt AIServiceFunctionRole.Arn
+  ApiEndpoint:
+    Description: API Gateway endpoint URL for AI Service function
+    Value: !Sub "https://${AIServiceHttpApi}.execute-api.${AWS::Region}.amazonaws.com/${StageName}/ai-gen/"
+    
