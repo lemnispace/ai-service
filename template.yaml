@@ -1,4 +1,4 @@
-AWSTemplateFormatVersion: '2010-09-09'
+AWSTemplateFormatVersion: "2010-09-09"
 Transform: AWS::Serverless-2016-10-31
 Description: >
   ai-service
@@ -44,7 +44,7 @@ Resources:
       Handler: main.handler
       Runtime: python3.11
       Architectures:
-      - x86_64
+        - x86_64
       Environment:
         Variables:
           STABILITY_API_HOST: !Ref StabilityAPIHost
@@ -58,7 +58,7 @@ Resources:
           Properties:
             Path: /ai-gen/{proxy+}
             Method: ANY
-            ApiId: 
+            ApiId:
               Ref: AIServiceHttpApi
 
   AIServiceHttpApi:
@@ -83,4 +83,8 @@ Outputs:
   ApiEndpoint:
     Description: API Gateway endpoint URL for AI Service function
     Value: !Sub "https://${AIServiceHttpApi}.execute-api.${AWS::Region}.amazonaws.com/${StageName}/ai-gen/"
-    
+  AIServiceHttpApi:
+    Description: AI Service HTTP API
+    Value: !Ref AIServiceHttpApi
+    Export:
+      Name: AIServiceHttpApi
