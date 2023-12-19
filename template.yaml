@@ -59,9 +59,9 @@ Resources:
             Path: /ai-gen/{proxy+}
             Method: ANY
             ApiId:
-              Ref: AIServiceHttpApi
+              Ref: LemniSpaceServicesHttpApi
 
-  AIServiceHttpApi:
+  LemniSpaceServicesHttpApi:
     Type: AWS::Serverless::HttpApi
     Properties:
       StageName: !Ref StageName
@@ -82,9 +82,9 @@ Outputs:
     Value: !GetAtt AIServiceFunctionRole.Arn
   ApiEndpoint:
     Description: API Gateway endpoint URL for AI Service function
-    Value: !Sub "https://${AIServiceHttpApi}.execute-api.${AWS::Region}.amazonaws.com/${StageName}/ai-gen/"
-  AIServiceHttpApi:
+    Value: !Sub "https://${LemniSpaceServicesHttpApi}.execute-api.${AWS::Region}.amazonaws.com/${StageName}/ai-gen/"
+  LemniSpaceServicesHttpApi:
     Description: AI Service HTTP API
-    Value: !Ref AIServiceHttpApi
+    Value: !Ref LemniSpaceServicesHttpApi
     Export:
-      Name: AIServiceHttpApi
+      Name: LemniSpaceServicesHttpApi
