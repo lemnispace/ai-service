@@ -1,9 +1,9 @@
 AWSTemplateFormatVersion: "2010-09-09"
 Transform: AWS::Serverless-2016-10-31
 Description: >
-  ai-service
+  lemnispace-services
 
-  SAM Template for ai-service
+  SAM Template for the ai-service of the Lemnispace Services
 
 # More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
 Globals:
@@ -51,12 +51,12 @@ Resources:
           STABILITY_API_HOST_GEN: !Ref StabilityAPIHostGen
           STABILITY_API_KEY: !Ref StabilityAPIKey
           ALLOWED_ORIGINS: !Ref AllowOrigins
-          ROOT_PATH: ai-gen
+          ROOT_PATH: gen/ai
       Events:
-        AIService:
+        LemniSpaceGenService:
           Type: HttpApi
           Properties:
-            Path: /ai-gen/{proxy+}
+            Path: /gen/ai/{proxy+}
             Method: ANY
             ApiId:
               Ref: LemniSpaceServicesHttpApi
@@ -67,6 +67,7 @@ Resources:
       StageName: !Ref StageName
       StageVariables:
         Stage: !Ref StageName
+      
 
 Outputs:
   # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
@@ -82,7 +83,7 @@ Outputs:
     Value: !GetAtt AIServiceFunctionRole.Arn
   ApiEndpoint:
     Description: API Gateway endpoint URL for AI Service function
-    Value: !Sub "https://${LemniSpaceServicesHttpApi}.execute-api.${AWS::Region}.amazonaws.com/${StageName}/ai-gen/"
+    Value: !Sub "https://${LemniSpaceServicesHttpApi}.execute-api.${AWS::Region}.amazonaws.com/${StageName}/gen/ai/"
   LemniSpaceServicesHttpApi:
     Description: AI Service HTTP API
     Value: !Ref LemniSpaceServicesHttpApi

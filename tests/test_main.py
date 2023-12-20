@@ -1,4 +1,5 @@
 from app.main import handler, app
+import os
 
 TEST_EVENT = {
     "body": None,
@@ -69,7 +70,7 @@ TEST_EVENT = {
         "X-Forwarded-Proto": ["https"],
     },
     "multiValueQueryStringParameters": None,
-    "path": "/ai-gen/docs",
+    "path": "/gen/ai/docs",
     "pathParameters": {"proxy": "docs"},
     "queryStringParameters": None,
     "requestContext": {
@@ -93,16 +94,16 @@ TEST_EVENT = {
             "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36 Edg/119.0.0.0",
             "userArn": None,
         },
-        "path": "/Stage/ai-gen/{docs}",
+        "path": "/Stage/gen/ai/{docs}",
         "protocol": "HTTP/1.1",
         "requestId": "bca00121aasdvsd",
         "requestTime": "12/Dec/2023:15:44:02 +0000",
         "requestTimeEpoch": 90312312311,
         "resourceId": "abc923",
-        "resourcePath": "/ai-gen/{proxy+}",
+        "resourcePath": "/gen/ai/{proxy+}",
         "stage": "Stage",
     },
-    "resource": "/ai-gen/{proxy+}",
+    "resource": "/gen/ai/{proxy+}",
     "stageVariables": None,
 }
 
@@ -112,12 +113,12 @@ def test_handler_with_stage():
     event["stageVariables"] = {"Stage": "Testing"}
     response = handler(event, {})
     assert response["statusCode"] != 500
-    assert app.root_path == "/Testing/ai-gen"
+    assert app.root_path == "/Testing/"
 
     event["stageVariables"] = {"Stage": "Prod"}
     response = handler(event, {})
     assert response["statusCode"] != 500
-    assert app.root_path == "/Prod/ai-gen"
+    assert app.root_path == "/Prod/"
 
 
 def test_handler_without_stage():
@@ -125,4 +126,14 @@ def test_handler_without_stage():
     event["stageVariables"] = None
     response = handler(event, {})
     assert response["statusCode"] != 500
-    assert app.root_path == "/ai-gen"
+    assert app.root_path == "/"
+
+
+def test_handler_with_env():
+    event = dict(TEST_EVENT)
+    event["stageVariables"] = {"Stage": "Testing"}
+    os.environ["ROOT_PATH"] = "test"
+    response = handler(event, {})
+    assert response["statusCode"] != 500
+    assert app.root_path == "/Testing/test"
+    del os.environ["ROOT_PATH"]
