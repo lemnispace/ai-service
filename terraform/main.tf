@@ -58,10 +58,14 @@ resource "aws_lambda_function" "AIServiceFunction" {
   handler          = "main.handler"
   runtime          = "python3.11"
   source_code_hash = data.archive_file.AIServiceFunction.output_base64sha256
+  timeout          = 30
   environment {
     variables = {
-      ALLOWED_ORIGINS = var.allow_origins
-      ROOT_PATH       = var.root_path
+      ALLOWED_ORIGINS        = var.allow_origins
+      ROOT_PATH              = var.root_path
+      STABILITY_API_HOST     = var.stability_api_host
+      STABILITY_API_HOST_GEN = var.stability_api_host_gen
+      STABILITY_API_KEY      = var.stability_api_key
     }
   }
 }
