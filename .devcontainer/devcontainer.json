@@ -10,7 +10,8 @@
   "features": {
     "ghcr.io/devcontainers/features/node:1": {},
     "ghcr.io/devcontainers/features/docker-in-docker:2": {},
-    "ghcr.io/devcontainers/features/aws-cli:1": {}
+    "ghcr.io/devcontainers/features/aws-cli:1": {},
+    "ghcr.io/devcontainers/features/terraform:1": {}
   },
 
   // Use 'forwardPorts' to make a list of ports inside the container available locally.
@@ -40,7 +41,8 @@
         "ms-toolsai.jupyter-renderers",
         "ms-toolsai.vscode-jupyter-slideshow",
         "DavidAnson.vscode-markdownlint",
-        "ms-python.vscode-pylance"
+        "ms-python.vscode-pylance",
+        "hashicorp.terraform"
       ],
       "settings": {
         "editor.formatOnSave": true,
