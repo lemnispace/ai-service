@@ -1,4 +1,4 @@
-import app.api.gen.text_to_image as text_to_image
+from app.api.gen.text_to_image import router, get_stability_api_key
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
 from httpx import Response
@@ -8,7 +8,7 @@ import respx
 import json
 
 app = FastAPI()
-app.include_router(text_to_image.router)
+app.include_router(router)
 client = TestClient(app)
 
 # mock url
@@ -28,18 +28,21 @@ mock_text_to_image_response = Response(
 )
 
 
+def mock_get_api_key():
+    return "api_key"
+
+
 @pytest.fixture(autouse=True)
 def set_env_vars():
     os.environ["STABILITY_API_HOST"] = "https://test_api_host.ai"
     os.environ["STABILITY_API_HOST_GEN"] = "https://test_api_host.ai/v1/gen"
-    os.environ["STABILITY_API_KEY"] = "api_key"
     yield
     os.environ.pop("STABILITY_API_HOST", None)
     os.environ.pop("STABILITY_API_HOST_GEN", None)
-    os.environ.pop("STABILITY_API_KEY", None)
 
 
 def test_text_to_image_case1():
+    app.dependency_overrides[get_stability_api_key] = mock_get_api_key
     with respx.mock() as mock:
         # Mock the response from the Stability API
         route = mock.post(mock_url).mock(return_value=mock_text_to_image_response)
@@ -80,6 +83,7 @@ def test_text_to_image_case1():
 
 
 def test_text_to_image_case2():
+    app.dependency_overrides[get_stability_api_key] = mock_get_api_key
     with respx.mock() as mock:
         # Mock the response from the Stability API
         route = mock.post(mock_url).mock(return_value=mock_text_to_image_response)
