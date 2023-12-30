@@ -1,16 +1,3 @@
-variable "aws_region" {
-  description = "AWS region for all resources."
-
-  type    = string
-  default = "us-east-1"
-}
-
-variable "stage" {
-  description = "Stage for the API Gateway where the lambda function will be deployed to"
-  type        = string
-  default     = "Dev"
-}
-
 variable "allow_origins" {
   description = "Comma-separated list of allowed origins for CORS"
   type        = string
@@ -26,11 +13,19 @@ variable "root_path" {
 variable "stability_api_host" {
   description = "Host for the Stability API"
   type        = string
-  default     = "https://api.stability.ai"
 }
 
 variable "stability_api_host_gen" {
   description = "Host for the Stability API"
   type        = string
-  default     = "https://api.stability.ai/v1/generation"
+}
+
+variable "s3_bucket_id" {
+  description = "ID of the S3 bucket where the lambda function will be deployed to"
+  type        = string
+}
+
+variable "execute_lambda_role_arn" {
+  description = "ARN of the role that will be used to execute the lambda function. This is used to give the API Gateway permission to invoke the lambda function"
+  type        = string
 }
