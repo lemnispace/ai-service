@@ -1,6 +1,6 @@
 from httpx import AsyncClient
 import os
-from app.utils.stability_utils import StabilityRequestError
+from utils.stability_utils import StabilityRequestError
 from utils.types import StabilityTextToImageRequest, EngineId
 from dotenv import load_dotenv
 

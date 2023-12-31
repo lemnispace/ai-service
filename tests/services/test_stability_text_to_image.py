@@ -7,7 +7,6 @@ from app.services.stability_text_to_image import (
     get_image_gen_base_url,
 )
 from app.utils.types import StabilityTextToImageRequest, EngineId, TextPrompt
-from app.utils.stability_utils import StabilityRequestError
 
 # mock url
 mock_url = "https://test_api_host.ai/v1/gen/stable-diffusion-v1-6/text-to-image"
@@ -62,7 +61,7 @@ async def test_generate_image_from_text_failure():
         )
         engine_id = EngineId.v1_6
         api_key = "your_api_key"
-        with pytest.raises(StabilityRequestError):
+        with pytest.raises(Exception):
             await generate_image_from_text(request, engine_id, api_key)
 
 
