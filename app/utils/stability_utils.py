@@ -1,10 +1,9 @@
 from .types import EngineId, GenTextToImageRequest, StabilityTextToImageRequest
 
 
-# Custom exception for errors mapping a request to a Stability API request
 class StabilityRequestError(Exception):
     """
-    Exception raised when there is an error mapping a request to a Stability API request
+    Exception raised when there is an error with Stability API
 
     Attributes:
         message -- explanation of the error
