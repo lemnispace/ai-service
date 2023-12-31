@@ -4,7 +4,7 @@ on:
   push:
     branches: [ main ]
   pull_request:
-    branches: [ main ]
+    branches-ignore: [ main ]
 
 jobs:
   build:
@@ -46,11 +46,13 @@ jobs:
         run: |
           python scripts/build.py
 
-      - name: Set Environment Variables
+      - name: Set Stage
         run: |
-          echo "TF_VAR_stage=$STAGE >> $GITHUB_ENV
-          echo "TF_VAR_stability_api_host=$STABILITY_API_HOST >> $GITHUB_ENV
-          echo "TF_VAR_stability_api_host_gen=$STABILITY_API_HOST_GEN >> $GITHUB_ENV
+          if [ ${{ github.ref }} = 'refs/heads/main' ]; then
+            echo "export TF_VAR_stage=Prod" >> $GITHUB_ENV
+          else
+            echo "export TF_VAR_stage=Dev" >> $GITHUB_ENV
+          fi
 
       - name: Terraform init
         id: init
