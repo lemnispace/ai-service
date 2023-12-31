@@ -51,15 +51,15 @@ jobs:
 
       - name: Terraform init
         id: init
-        run: terraform init
+        run: terraform -chdir="./terraform" init
 
       - name: Terraform validate
         id: validate
-        run: terraform validate -no-color
+        run: terraform -chdir="./terraform" validate -no-color
 
       - name: Terraform plan
         id: plan
-        run: terraform plan -no-color
+        run: terraform -chdir="./terraform" plan -no-color
 
       - run: echo ${{ steps.plan.outputs.stdout }}
       - run: echo ${{ steps.plan.outputs.stderr }}
@@ -67,6 +67,6 @@ jobs:
 
       - name: Deploy
         run: |
-          terraform apply -auto-approve
+          terraform -chdir="./terraform" apply -auto-approve
 
           

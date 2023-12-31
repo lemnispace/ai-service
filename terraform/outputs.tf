@@ -1,11 +1,16 @@
 output "AIServiceFunction_name" {
   description = "The name of the lambda function"
-  value       = aws_lambda_function.AIServiceFunction.function_name
+  value       = module.ai_service_lambda.function_name
 }
 
 output "AIServiceFunction_arn" {
   description = "The ARN of the lambda function"
-  value       = aws_lambda_function.AIServiceFunction.arn
+  value       = module.ai_service_lambda.arn
+}
+
+output "AIServiceFunction_invoke_arn" {
+  description = "The invoke ARN of the lambda function"
+  value       = module.ai_service_lambda.invoke_arn
 }
 
 output "ai_service_route_id" {

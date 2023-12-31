@@ -37,13 +37,12 @@ jobs:
       - name: Build and package
         run: |
           python scripts/build.py
-
       - name: Terraform init
         id: init
-        run: terraform init
+        run: terraform -chdir="./terraform" init
 
       - name: Terraform validate
         id: validate
-        run: terraform validate -no-color
+        run: terraform -chdir="./terraform" validate -no-color
 
       - run: pytest
