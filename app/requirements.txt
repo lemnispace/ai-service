@@ -3,3 +3,4 @@ uvicorn[standard]
 httpx
 mangum
 python-dotenv
+boto3

@@ -1,17 +1,10 @@
 from httpx import AsyncClient
 import os
+from utils.stability_utils import StabilityRequestError
 from utils.types import StabilityTextToImageRequest, EngineId
 from dotenv import load_dotenv
 
 load_dotenv()
-
-
-def get_api_key() -> str:
-    """Get the API key for the image generation API"""
-    key = os.getenv("STABILITY_API_KEY")
-    if not key:
-        raise Exception("Stability API key not found")
-    return key
 
 
 def get_image_gen_base_url(engine_id: EngineId) -> str:
@@ -21,13 +14,12 @@ def get_image_gen_base_url(engine_id: EngineId) -> str:
 
 
 async def generate_image_from_text(
-    request: StabilityTextToImageRequest, engine_id: EngineId
+    request: StabilityTextToImageRequest, engine_id: EngineId, api_key: str
 ):
     """Generate an image using the Stability text-to-image API"""
     async with AsyncClient() as client:
         url = get_image_gen_base_url(engine_id)
         url = f"{url}/text-to-image"
-        api_key = get_api_key()
         stability_request = request.model_dump(exclude_none=True)
         try:
             response = await client.post(
@@ -44,8 +36,8 @@ async def generate_image_from_text(
                 response.raise_for_status()
             return response.json()
         except Exception as e:
-            print(
-                f"Error fetching image with request url: {url}.\nRequest: {stability_request}",
+            error_message = (
+                f"Error fetching image with request url: {url}.",
                 e,
             )
-            raise Exception(e)
+            raise StabilityRequestError(error_message, stability_request)

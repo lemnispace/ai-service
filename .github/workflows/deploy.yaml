@@ -1,0 +1,74 @@
+name: Deploy
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      TF_VAR_aws_region: ${{ secrets.AWS_REGION }}
+      TF_VAR_allow_origins: ${{ secrets.ALLOW_ORIGINS }}
+      TF_VAR_root_path: ${{ secrets.ROOT_PATH }}
+      TF_VAR_stability_api_key_name: ${{ secrets.STABILITY_API_KEY_NAME }}
+    # These permissions are needed to interact with GitHub's OIDC Token endpoint.
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Setup SAM
+        uses: aws-actions/setup-sam@v2
+        with:
+          use-installer: true
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: 3.11
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
+          aws-region: ${{ secrets.AWS_REGION }}
+      - name: Terraform CLI setup
+        uses: hashicorp/setup-terraform@v3
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r ./app/requirements.txt
+
+      - name: Build and package
+        run: |
+          python scripts/build.py
+
+      - name: Set Stage
+        run: |
+          if [ ${{ github.ref }} = 'refs/heads/main' ]; then
+            echo "Deploying to Prod"
+            echo "export TF_VAR_stage=Prod" >> $GITHUB_ENV
+          else
+            echo "Deploying to Dev"
+          fi
+
+      - name: Terraform init
+        id: init
+        run: terraform -chdir="./terraform" init
+
+      - name: Terraform validate
+        id: validate
+        run: terraform -chdir="./terraform" validate -no-color
+
+      - name: Terraform plan
+        id: plan
+        run: terraform -chdir="./terraform" plan -no-color
+
+      - name: Deploy
+        run: |
+          terraform -chdir="./terraform" apply -auto-approve
+
+          

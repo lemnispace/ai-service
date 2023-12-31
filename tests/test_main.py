@@ -1,5 +1,8 @@
 from app.main import handler, app
 import os
+import pytest
+from moto import mock_ssm
+import boto3
 
 TEST_EVENT = {
     "body": None,
@@ -106,6 +109,29 @@ TEST_EVENT = {
     "resource": "/gen/ai/{proxy+}",
     "stageVariables": None,
 }
+
+
+@pytest.fixture(autouse=True)
+def mock_ssm_env():
+    with mock_ssm():
+        ssm_client = boto3.client("ssm", "us-east-1")
+        ssm_client.put_parameter(
+            Name="api_key_name", Value="abcdef123", Type="SecureString"
+        )
+        yield ssm_client
+
+
+@pytest.fixture(autouse=True)
+def set_env_vars():
+    os.environ["STABILITY_API_HOST"] = "https://test_api_host.ai"
+    os.environ["STABILITY_API_HOST_GEN"] = "https://test_api_host.ai/v1/gen"
+    os.environ["STABILITY_API_KEY_NAME"] = "api_key_name"
+    os.environ["AWS_PARAMETER_STORE_REGION_NAME"] = "region_name"
+    yield
+    os.environ.pop("STABILITY_API_HOST", None)
+    os.environ.pop("STABILITY_API_HOST_GEN", None)
+    os.environ.pop("STABILITY_API_KEY_NAME", None)
+    os.environ.pop("AWS_PARAMETER_STORE_REGION_NAME", None)
 
 
 def test_handler_with_stage():

@@ -27,54 +27,29 @@ data "terraform_remote_state" "lemnispace_services" {
   }
 }
 
-
 module "ai_service_routes" {
   source            = "./modules/routes"
   lambda_endpoint   = var.root_path
-  lambda_invoke_arn = aws_lambda_function.AIServiceFunction.invoke_arn
+  lambda_invoke_arn = module.ai_service_lambda.invoke_arn
   api_id            = data.terraform_remote_state.lemnispace_services.outputs.api_id
 }
 
-### S3 Bucket for Lambda Function ###
-data "archive_file" "AIServiceFunction" {
-  type        = "zip"
-  source_dir  = "${path.module}/../.aws-sam/build/AIServiceFunction"
-  output_path = "${path.module}/../.aws-sam/AIServiceFunction.zip"
-}
-
-resource "aws_s3_object" "ai_service" {
-  bucket = data.terraform_remote_state.lemnispace_services.outputs.services_s3_bucket_id
-  key    = "AIServiceFunction.zip"
-
-  source = data.archive_file.AIServiceFunction.output_path
-  etag   = filemd5(data.archive_file.AIServiceFunction.output_path)
-}
-
-### Lambda Function ###
-resource "aws_lambda_function" "AIServiceFunction" {
-  filename         = data.archive_file.AIServiceFunction.output_path
-  function_name    = "AIServiceFunction"
-  role             = data.terraform_remote_state.lemnispace_services.outputs.execute_lambda_role_arn
-  handler          = "main.handler"
-  runtime          = "python3.11"
-  source_code_hash = data.archive_file.AIServiceFunction.output_base64sha256
-  timeout          = 30
-  memory_size      = 512
-  environment {
-    variables = {
-      ALLOWED_ORIGINS        = var.allow_origins
-      ROOT_PATH              = var.root_path
-      STABILITY_API_HOST     = var.stability_api_host
-      STABILITY_API_HOST_GEN = var.stability_api_host_gen
-      STABILITY_API_KEY      = var.stability_api_key
-    }
-  }
+module "ai_service_lambda" {
+  source                     = "./modules/lambda"
+  allow_origins              = var.allow_origins
+  root_path                  = var.root_path
+  stability_api_host         = var.stability_api_host
+  stability_api_host_gen     = var.stability_api_host_gen
+  s3_bucket_id               = data.terraform_remote_state.lemnispace_services.outputs.services_s3_bucket_id
+  execute_lambda_role_arn    = data.terraform_remote_state.lemnispace_services.outputs.execute_lambda_role_arn
+  aws_parameter_store_region = var.aws_region
+  stability_api_key_name     = var.stability_api_key_name
 }
 
 resource "aws_lambda_permission" "ai_service_apigw_invoke_permission" {
   statement_id  = "AllowAPIGatewayInvoke"
   action        = "lambda:InvokeFunction"
-  function_name = aws_lambda_function.AIServiceFunction.function_name
+  function_name = module.ai_service_lambda.function_name
   principal     = "apigateway.amazonaws.com"
   source_arn    = "${data.terraform_remote_state.lemnispace_services.outputs.api_execution_arn}/*/*"
 }

@@ -1,4 +1,9 @@
-from app.utils.stability_utils import get_text_to_image_api_request
+import pytest
+from app.utils.stability_utils import (
+    get_text_to_image_api_request,
+    get_default_image_dimensions,
+    StabilityRequestError,
+)
 from app.utils.types import EngineId, GenTextToImageRequest, StabilityTextToImageRequest
 
 
@@ -57,3 +62,34 @@ def test_get_text_to_image_api_request_case3():
         steps=40,
     )
     assert get_text_to_image_api_request(request, engine_id), expected_request
+
+
+def test_get_text_to_image_api_request_case4():
+    # Test case 4: Error case
+    request = GenTextToImageRequest(prompt="Hello")
+    # create an invalid request object
+    request.prompt = None
+    engine_id = EngineId.v1_6
+    with pytest.raises(StabilityRequestError):
+        get_text_to_image_api_request(request, engine_id)
+
+
+def test_get_default_image_dimensions_case1():
+    # Test case 1: Engine id v1_6
+    engine_id = EngineId.v1_6
+    expected_dimensions = (512, 512)
+    assert get_default_image_dimensions(engine_id) == expected_dimensions
+
+
+def test_get_default_image_dimensions_case2():
+    # Test case 2: Engine id sdxl_v1
+    engine_id = EngineId.sdxl_v1
+    expected_dimensions = (1024, 1024)
+    assert get_default_image_dimensions(engine_id) == expected_dimensions
+
+
+def test_get_default_image_dimensions_case3():
+    # Test case 3: Engine id unknown
+    engine_id = "unknown"
+    with pytest.raises(ValueError):
+        get_default_image_dimensions(engine_id)
