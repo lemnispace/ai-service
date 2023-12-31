@@ -1,11 +1,13 @@
 from app.api.gen.text_to_image import router, get_stability_api_key
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from fastapi.testclient import TestClient
 from httpx import Response
 import os
 import pytest
 import respx
 import json
+from moto import mock_ssm
+import boto3
 
 app = FastAPI()
 app.include_router(router)
@@ -30,6 +32,16 @@ mock_text_to_image_response = Response(
 
 def mock_get_api_key():
     return "api_key"
+
+
+@pytest.fixture()
+def mock_ssm_env():
+    with mock_ssm():
+        ssm_client = boto3.client("ssm", "us-east-1")
+        ssm_client.put_parameter(
+            Name="api_key_name", Value="abcdef123", Type="SecureString"
+        )
+        yield ssm_client
 
 
 @pytest.fixture(autouse=True)
@@ -108,3 +120,18 @@ def test_text_to_image_case2():
             "cfg_scale": 7,
             "seed": 0,
         }
+
+
+def test_get_stability_api_key(mock_ssm_env):
+    def cleanup():
+        os.environ.pop("STABILITY_API_KEY_NAME", None)
+        os.environ.pop("AWS_PARAMETER_STORE_REGION_NAME", None)
+
+    os.environ["AWS_PARAMETER_STORE_REGION_NAME"] = "us-west-2"
+    with pytest.raises(HTTPException):
+        # no STABILITY_API_KEY_NAME env var set
+        get_stability_api_key(mock_ssm_env)
+    os.environ["STABILITY_API_KEY_NAME"] = "api_key_name"
+    value = get_stability_api_key(mock_ssm_env)
+    assert value == "abcdef123"
+    cleanup()

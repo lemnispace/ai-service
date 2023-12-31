@@ -9,9 +9,13 @@ from utils.stability_utils import get_text_to_image_api_request
 from services.stability_text_to_image import generate_image_from_text
 
 
-def get_stability_api_key():
-    client = get_parameter_store_client()
-    name = get_env_variable("STABILITY_API_KEY_NAME")
+def get_stability_api_key(client: Annotated[any, Depends(get_parameter_store_client)]):
+    name = get_env_variable("STABILITY_API_KEY_NAME", None)
+    if name is None:
+        raise HTTPException(
+            status_code=500,
+            detail="STABILITY_API_KEY_NAME environment variable not set",
+        )
     return get_secret(client, name)
 
 
@@ -31,4 +35,4 @@ async def text_to_image(
         )
     except Exception as e:
         print(e)
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail="Internal Server Error")
