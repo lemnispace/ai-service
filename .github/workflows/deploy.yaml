@@ -4,7 +4,7 @@ on:
   push:
     branches: [ main ]
   pull_request:
-    branches-ignore: [ main ]
+    branches: [ main ]
 
 jobs:
   build:
@@ -49,8 +49,10 @@ jobs:
       - name: Set Stage
         run: |
           if [ ${{ github.ref }} = 'refs/heads/main' ]; then
+            echo "Deploying to Prod"
             echo "export TF_VAR_stage=Prod" >> $GITHUB_ENV
           else
+            echo "Deploying to Dev"
             echo "export TF_VAR_stage=Dev" >> $GITHUB_ENV
           fi
 
