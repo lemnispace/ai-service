@@ -9,6 +9,14 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      TF_VAR_aws_region: ${{ secrets.AWS_REGION }}
+      TF_VAR_stage: ${{ env.STAGE }}
+      TF_VAR_allow_origins: ${{ secrets.ALLOW_ORIGINS }}
+      TF_VAR_root_path: ${{ secrets.ROOT_PATH }}
+      TF_VAR_stability_api_host: ${{ env.STABILITY_API_HOST }}
+      TF_VAR_stability_api_host_gen: ${{ env.STABILITY_API_HOST_GEN }}
+      TF_VAR_stability_api_key_name: ${{ secrets.STABILITY_API_KEY_NAME }}
     # These permissions are needed to interact with GitHub's OIDC Token endpoint.
     permissions:
       id-token: write

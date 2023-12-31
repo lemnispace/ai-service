@@ -35,13 +35,15 @@ module "ai_service_routes" {
 }
 
 module "ai_service_lambda" {
-  source                  = "./modules/lambda"
-  allow_origins           = var.allow_origins
-  root_path               = var.root_path
-  stability_api_host      = var.stability_api_host
-  stability_api_host_gen  = var.stability_api_host_gen
-  s3_bucket_id            = data.terraform_remote_state.lemnispace_services.outputs.services_s3_bucket_id
-  execute_lambda_role_arn = data.terraform_remote_state.lemnispace_services.outputs.execute_lambda_role_arn
+  source                     = "./modules/lambda"
+  allow_origins              = var.allow_origins
+  root_path                  = var.root_path
+  stability_api_host         = var.stability_api_host
+  stability_api_host_gen     = var.stability_api_host_gen
+  s3_bucket_id               = data.terraform_remote_state.lemnispace_services.outputs.services_s3_bucket_id
+  execute_lambda_role_arn    = data.terraform_remote_state.lemnispace_services.outputs.execute_lambda_role_arn
+  aws_parameter_store_region = var.aws_region
+  stability_api_key_name     = var.stability_api_key_name
 }
 
 resource "aws_lambda_permission" "ai_service_apigw_invoke_permission" {

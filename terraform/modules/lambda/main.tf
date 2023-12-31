@@ -29,6 +29,8 @@ resource "aws_lambda_function" "AIServiceFunction" {
       ROOT_PATH              = var.root_path
       STABILITY_API_HOST     = var.stability_api_host
       STABILITY_API_HOST_GEN = var.stability_api_host_gen
+      AWS_PARAMETER_STORE_REGION_NAME = var.aws_parameter_store_region
+      STABILITY_API_KEY_NAME = var.stability_api_key_name
     }
   }
 }

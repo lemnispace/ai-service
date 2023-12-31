@@ -34,3 +34,8 @@ variable "stability_api_host_gen" {
   type        = string
   default     = "https://api.stability.ai/v1/generation"
 }
+
+variable "stability_api_key_name" {
+  description = "Name of the parameter in the parameter store that contains the API key for the Stability API"
+  type        = string
+}
