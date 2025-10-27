@@ -1,4 +1,10 @@
 from .types import EngineId, GenTextToImageRequest, StabilityTextToImageRequest
+import logging
+
+logger = logging.getLogger(__name__)
+
+# Default CFG scale for Stability AI (recommended for prompt adherence)
+DEFAULT_CFG_SCALE = 7
 
 
 class StabilityRequestError(Exception):
@@ -19,7 +25,7 @@ class StabilityRequestError(Exception):
         return f"{self.message}: {self.request}"
 
 
-def get_default_image_dimensions(engine_id: EngineId) -> (int, int):
+def get_default_image_dimensions(engine_id: EngineId) -> tuple[int, int]:
     """Get the default image dimensions for a given engine"""
     if engine_id == EngineId.v1_6:
         return (512, 512)
@@ -46,23 +52,33 @@ def get_text_to_image_api_request(
     text_prompts = [{"text": request.prompt, "weight": 1.0}]
     if request.negative_prompt:
         text_prompts.append({"text": request.negative_prompt, "weight": -1.0})
-    if not request.width or not request.height:
-        width, height = get_default_image_dimensions(engine_id)
-        request.width = width
-        request.height = height
+
+    # Get dimensions without mutating the original request
+    width = request.width
+    height = request.height
+    if not width or not height:
+        default_width, default_height = get_default_image_dimensions(engine_id)
+        width = width or default_width
+        height = height or default_height
+
     try:
         stability_request = StabilityTextToImageRequest(
-            height=request.height,
-            width=request.width,
+            height=height,
+            width=width,
             text_prompts=text_prompts,
-            cfg_scale=7,  # Assuming a default value, update as needed
+            cfg_scale=DEFAULT_CFG_SCALE,
             samples=request.samples,
-            seed=request.seed,  # Assuming 0 for random
+            seed=request.seed,
             steps=request.steps,
         )
         return stability_request
     except Exception as e:
-        print(e)
+        logger.error(
+            f"Error mapping request to Stability API request: {e}",
+            exc_info=True,
+            extra={"original_request": request.model_dump()}
+        )
         raise StabilityRequestError(
-            f"Error mapping request to Stability API request. {e}\nRequest:", request
+            f"Error mapping request to Stability API request: {e}",
+            request
         )

@@ -163,3 +163,35 @@ def test_handler_with_env():
     assert response["statusCode"] != 500
     assert app.root_path == "/Testing/test"
     del os.environ["ROOT_PATH"]
+
+
+def test_health_check_endpoint():
+    """Test that health check endpoint returns healthy status"""
+    from fastapi.testclient import TestClient
+    client = TestClient(app)
+    response = client.get("/health")
+    assert response.status_code == 200
+    data = response.json()
+    assert data["status"] == "healthy"
+    assert data["service"] == "ai-service"
+    assert "version" in data
+
+
+def test_readiness_check_endpoint():
+    """Test that readiness check endpoint returns ready status"""
+    from fastapi.testclient import TestClient
+    client = TestClient(app)
+    response = client.get("/readiness")
+    assert response.status_code == 200
+    data = response.json()
+    assert data["status"] == "ready"
+    assert data["service"] == "ai-service"
+
+
+def test_request_id_middleware():
+    """Test that request ID middleware adds headers"""
+    from fastapi.testclient import TestClient
+    client = TestClient(app)
+    response = client.get("/health")
+    assert "X-Request-ID" in response.headers
+    assert "X-Process-Time" in response.headers

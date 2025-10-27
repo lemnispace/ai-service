@@ -44,6 +44,7 @@ module "ai_service_lambda" {
   execute_lambda_role_arn    = data.terraform_remote_state.lemnispace_services.outputs.execute_lambda_role_arn
   aws_parameter_store_region = var.aws_region
   stability_api_key_name     = var.stability_api_key_name
+  stage                      = var.stage
 }
 
 resource "aws_lambda_permission" "ai_service_apigw_invoke_permission" {

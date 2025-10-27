@@ -17,6 +17,10 @@ class GenTextToImageRequest(BaseModel):
     negative_prompt: Optional[str] = Field(
         default=None, description="Items you don't want in the image"
     )
+    engine_id: Optional[EngineId] = Field(
+        default=None,
+        description="Stable Diffusion engine to use (v1_6 or sdxl_v1). Defaults to v1_6."
+    )
     seed: Optional[int] = Field(
         default=None,
         description="Seed is used to reproduce results, same seed will give you same image in return again. Pass null for a random number.",

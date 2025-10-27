@@ -39,3 +39,9 @@ variable "stability_api_key_name" {
   description = "Name of the parameter in the parameter store that contains the API key for the Stability API"
   type        = string
 }
+
+variable "stage" {
+  description = "Stage for the API Gateway where the lambda function will be deployed to"
+  type        = string
+  default     = "Dev"
+}

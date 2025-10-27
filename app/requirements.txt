@@ -1,6 +1,17 @@
-fastapi
-uvicorn[standard]
-httpx
-mangum
-python-dotenv
-boto3
+# Core dependencies with pinned versions for reproducibility
+fastapi==0.109.0
+uvicorn[standard]==0.27.0
+httpx==0.26.0
+mangum==0.17.0
+python-dotenv==1.0.0
+boto3==1.34.0
+
+# Pydantic is required by FastAPI (pin compatible version)
+pydantic==2.5.3
+pydantic-core==2.14.6
+
+# Additional dependencies needed by uvicorn[standard]
+httptools==0.6.1
+python-multipart==0.0.6
+watchfiles==0.21.0
+websockets==12.0
